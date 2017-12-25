@@ -26,7 +26,7 @@ var api_gateway_definitions = require('./install/install_API_Gateway_definitions
 var installation_policy = require('./install/install_IAM_UserPolicy.json');
 var role_policy = require('./install/install_IAM_RolePolicy.json');
 
-let rejectionEmitter = unhandledRejection({
+var rejectionEmitter = unhandledRejection({
     timeout: 20
 });
 
@@ -843,7 +843,7 @@ co(function *() {
             s3Client: s3,
             maxAsyncS3: 20,     // this is the default
             s3RetryCount: 3,    // this is the default
-            s3RetryDelay: 1000, // this is the default
+            s3RetryDelay: 2000, // this is the default
             multipartUploadThreshold: 20971520, // this is the default (20 MB)
             multipartUploadSize: 15728640 // this is the default (15 MB)
         });

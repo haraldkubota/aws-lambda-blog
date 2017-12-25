@@ -750,6 +750,8 @@ co(function*(){
 	    uppercase: true
 	});
 
+console.log(config.api_gateway_stage_variables);
+
 	/* config.api_gateway_stage_variables.admin_pass = pass_generator.generate({
 	    length: 5,
 	    numbers: true,
