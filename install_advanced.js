@@ -9,6 +9,7 @@ var _ = require('lodash');
 
 var MemoryFS = require("memory-fs");
 var webpack = require("webpack");
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 var pass_generator = require('generate-password');
 var uuid = require('uuid');
 
@@ -28,7 +29,7 @@ co(function*(){
 	console.log();
 	console.log(chalk.bold.cyan("AWS Lambda Blog Platform install"));
 
-	if(!fs.existsSync("install_config.js")){
+	if(!fs.existsSync("../install_config.js")){
 		console.log();
 		console.log(chalk.cyan("Creating install_config.json from install_config_template.js"));
 
@@ -39,7 +40,7 @@ co(function*(){
 				reject();
 			});
 
-			var wr = fs.createWriteStream("install_config.js");
+			var wr = fs.createWriteStream("../install_config.js");
 			wr.on("error", function(err){
 				console.log(err);
 				reject();
@@ -54,7 +55,7 @@ co(function*(){
 		console.log(chalk.cyan("Not creating install_config.js from install_config_template.js - File already exists"));
 	}
 
-	var config = require('./install_config.js');
+	var config = require('../install_config.js');
 
 	var AWS = require('aws-sdk');
 	AWS.config.loadFromPath(config.credentials_path);
@@ -585,30 +586,41 @@ co(function*(){
 
 			var mfs = new MemoryFS();
 			var compiler = webpack({
-			      entry: entries[i].path,
-				  output: {
-				    path: __dirname,
-				    libraryTarget: "commonjs2",
-				    filename: "compiled.js"
-				  },
-				  externals: {
-				    "aws-sdk": "aws-sdk"
-				  },
-				  target: "node",
+		    entry: entries[i].path,
+		    output: {
+						    path: __dirname,
+		      libraryTarget: "commonjs2",
+		      filename: "compiled.js"
+		    },
+		    externals: {
+		      "aws-sdk": "aws-sdk"
+		    },
+		    target: "node",
 
-				  module: {
-				    loaders: [{
-				        test: /\.json$/,
-				        loader: 'json'
-				      }]
-				  },
-
-			}, function(err, stats) {
+		    module: {
+		      loaders: [{
+		        test: /\.json$/,
+		        loader: 'json'
+		      }]
+		    },
+		    plugins: [
+		    	new UglifyJSPlugin({
+		    		uglifyOptions: {
+		    			output: {
+		    				beautify: false,
+		    				semicolons: false
+		    			},
+		    			mangle: false
+		    		}
+		    	})
+		    	]
+		  }, function(err, stats) {
 			    if (err){
 				  	console.log(chalk.red(err));
 				  	console.log(err);
 				  }
 			});
+
 			compiler.outputFileSystem = mfs;
 
 			compiler.run(function(err, stats) {
