@@ -194,9 +194,10 @@ co(function*(){
 				  FunctionName: lambda_fn_name,
 				  Handler: path.basename(entries[i].name, '.js')+".handler",
 				  Role: role_arn,
-				  Runtime: "nodejs4.3",
+//				  Runtime: "nodejs4.3",
+				  Runtime: "nodejs6.10",
 				  //Description: 'STRING_VALUE',
-				  MemorySize: 512,
+				  MemorySize: 256,
 				  Publish: true,
 				  Timeout: 10
 				};
